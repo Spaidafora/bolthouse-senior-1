@@ -1,0 +1,32 @@
+{
+  "name": "bolthouse-senior",
+  "version": "1.0.0",
+  "description": "bolthouse central dashboard",
+  "keywords": [
+    "senior-project"
+  ],
+  "homepage": "https://github.com/Spaidafora/bolthouse-senior-1#readme",
+  "bugs": {
+    "url": "https://github.com/Spaidafora/bolthouse-senior-1/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Spaidafora/bolthouse-senior-1.git"
+  },
+  "license": "ISC",
+  "author": "Dust Devils",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon backend/src/server.js "
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
