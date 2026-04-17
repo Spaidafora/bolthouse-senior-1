@@ -16,10 +16,9 @@
   "license": "ISC",
   "author": "Dust Devils",
   "type": "module",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon backend/src/server.js "
+    "start": "nodemon src/server.js "
   },
   "dependencies": {
     "dotenv": "^17.3.1",
