@@ -1,10 +1,11 @@
+import LeafletFieldMap from "./LeafletFieldMap";
+import session3 from "../../../data/session-3.json";
+import fields from "../../../data/fields.json";
+
 export default function FieldMapCard() {
   return (
-    <div className="bg-white p-6 rounded-xl shadow">
-      <h3 className="text-xl font-bold text-gray-800 mb-4">Field Coverage Map</h3>
-      <div className="h-64 bg-gradient-to-r from-green-300 via-yellow-300 to-red-400 rounded-lg flex items-center justify-center text-gray-900 font-bold">
-        Heatmap / Field Visualization Placeholder
-      </div>
-    </div>
+    <section className="bg-white rounded-2xl shadow p-4">
+      <LeafletFieldMap session={session3} fields={fields} />
+    </section>
   );
 }
