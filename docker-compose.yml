@@ -1,0 +1,14 @@
+services:
+  mqtt-broker:
+    image: eclipse-mosquitto:2
+    container_name: bolthouse-mqtt-broker
+    ports:
+      - "1883:1883"
+    command: mosquitto -c /mosquitto-no-auth.conf
+
+  pi-simulator:
+    build:
+      context: ./pi-simulator
+    container_name: bolthouse-pi-simulator
+    depends_on:
+      - mqtt-broker
