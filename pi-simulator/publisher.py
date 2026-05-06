@@ -17,7 +17,7 @@ CSV_FILE = "./data/fake-data.csv"
 MESSAGE = "test1"
 
 
-# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 
 # userdata  = pending ack, tracking message ids.
@@ -61,7 +61,7 @@ with open(CSV_FILE, mode='r') as file:
         }
         
         payload_json = json.dumps(payload)
-        msg_info = mqttc.publish(topic=MQTT_TOPIC, payload=payload_json, qos=1)
+        msg_info = mqttc.publish(topic=MQTT_TOPIC, payload=payload_json, qos=2)
         pending_ack.add(msg_info.mid)
 
 
