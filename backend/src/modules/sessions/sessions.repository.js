@@ -1,5 +1,5 @@
-import pool from '../config/database.js';
-import { toSession } from '../models/session.model.js';
+import pool from '../../config/database.js';
+import { toSession } from './session.model.js';
 
 async function findById(sessionId) {
   const { rows } = await pool.query(

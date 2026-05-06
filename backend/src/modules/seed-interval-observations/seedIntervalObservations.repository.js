@@ -1,5 +1,5 @@
-import pool from '../config/database.js';
-import { toSeedIntervalObservation } from '../models/seedIntervalObservation.model.js';
+import pool from '../../config/database.js';
+import { toSeedIntervalObservation } from './seedIntervalObservation.model.js';
 
 async function insertBatch(observations) {
   if (!observations.length) return [];
