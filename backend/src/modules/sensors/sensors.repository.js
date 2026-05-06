@@ -1,5 +1,5 @@
-import pool from '../config/database.js';
-import { toSensor } from '../models/sensor.model.js';
+import pool from '../../config/database.js';
+import { toSensor } from './sensor.model.js';
 
 async function findById(sensorId) {
   const { rows } = await pool.query(

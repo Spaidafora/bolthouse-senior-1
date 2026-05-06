@@ -1,5 +1,5 @@
-import pool from '../config/database.js';
-import { toEdgeDevice } from '../models/edgeDevice.model.js';
+import pool from '../../config/database.js';
+import { toEdgeDevice } from './edgeDevice.model.js';
 
 async function findById(edgeDeviceId) {
   const { rows } = await pool.query(

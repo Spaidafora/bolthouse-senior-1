@@ -1,5 +1,5 @@
-import pool from '../config/database.js';
-import { toUser } from '../models/user.model.js';
+import pool from '../../config/database.js';
+import { toUser } from './user.model.js';
 
 async function findById(userId) {
   const { rows } = await pool.query(

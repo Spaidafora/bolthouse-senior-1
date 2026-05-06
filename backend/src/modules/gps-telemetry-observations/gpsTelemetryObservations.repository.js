@@ -1,5 +1,5 @@
-import pool from '../config/database.js';
-import { toGpsTelemetryObservation } from '../models/gpsTelemetryObservation.model.js';
+import pool from '../../config/database.js';
+import { toGpsTelemetryObservation } from './gpsTelemetryObservation.model.js';
 
 async function insertBatch(observations) {
   if (!observations.length) return [];
