@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 
 import authRouter from './modules/auth/auth.routes.js';
 import userRouter from './modules/users/user.routes.js';
@@ -14,6 +15,7 @@ import gpsRouter from './modules/gps-telemetry-observations/gpsTelemetryObservat
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173' }));
 app.use(express.json());
 
 app.get('/', (req, res) => {

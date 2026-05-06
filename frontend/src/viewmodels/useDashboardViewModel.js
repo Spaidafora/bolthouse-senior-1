@@ -1,64 +1,103 @@
+import { useState, useEffect } from 'react';
+import { getActiveSession, getSessions, getRowSummary, getSeedTimeline } from '../services/sessionService.js';
+import { getOperatorById } from '../services/operatorService.js';
+
+const BUCKET_MS = 10_000;
+
+const EMPTY = {
+  header: { title: '—', operator: '—', status: '—' },
+  metrics: [],
+  seedRateData: [],
+  tubePerfData: [],
+  tubeStatuses: [],
+  alerts: [],
+  analytics: [],
+};
+
+function tubeStatus(r) {
+  if (r.jam_flag) return { status: '0 Seeds (Jam)', tone: 'red' };
+  if (r.dropout_flag) return { status: 'Low Seed', tone: 'yellow' };
+  return { status: 'OK', tone: 'green' };
+}
+
+function fmtSessionTime(startIso, endIso) {
+  if (!startIso) return '—';
+  const end = endIso ? new Date(endIso) : new Date();
+  const sec = Math.floor((end - new Date(startIso)) / 1000);
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
 export function useDashboardViewModel() {
-  const header = {
-    title: "Carrot Seed Planting Dashboard",
-    operator: "John Doe",
-    status: "Live",
-  };
+  const [data, setData] = useState({ ...EMPTY, loading: true, error: null });
 
-  const metrics = [
-    { label: "Session Time", value: "01:12:30" },
-    { label: "Total Seeds Detected", value: "18,750" },
-    { label: "Average Rate", value: "6.2 seeds/sec" },
-    { label: "Planter Speed", value: "2.0 MPH" },
-  ];
+  useEffect(() => {
+    async function load() {
+      let session;
+      try {
+        session = await getActiveSession();
+      } catch {
+        const all = await getSessions();
+        session = all[0] ?? null;
+      }
 
-  const seedRateData = [
-    { t: "0s", rate: 4.8 },
-    { t: "10s", rate: 5.6 },
-    { t: "20s", rate: 6.1 },
-    { t: "30s", rate: 6.9 },
-    { t: "40s", rate: 6.2 },
-    { t: "50s", rate: 5.8 },
-    { t: "60s", rate: 6.4 },
-  ];
+      if (!session) {
+        setData({ ...EMPTY, loading: false, error: null });
+        return;
+      }
 
-  const tubePerfData = [
-    { tube: "T1", seeds: 120 },
-    { tube: "T2", seeds: 118 },
-    { tube: "T3", seeds: 0 },
-    { tube: "T4", seeds: 121 },
-    { tube: "T5", seeds: 66 },
-    { tube: "T6", seeds: 119 },
-  ];
+      const [rowSummary, seedTimeline, operator] = await Promise.all([
+        getRowSummary(session.sessionId),
+        getSeedTimeline(session.sessionId, BUCKET_MS),
+        session.operatorId ? getOperatorById(session.operatorId) : Promise.resolve(null),
+      ]);
 
-  const tubeStatuses = [
-    { name: "Tube 1", status: "OK", tone: "green" },
-    { name: "Tube 2", status: "OK", tone: "green" },
-    { name: "Tube 3", status: "0 Seeds (Jam)", tone: "red" },
-    { name: "Tube 4", status: "OK", tone: "green" },
-    { name: "Tube 5", status: "Low Seed", tone: "yellow" },
-    { name: "Tube 6", status: "OK", tone: "green" },
-  ];
+      const totalSeeds = rowSummary.reduce((sum, r) => sum + (r.total_seeds || 0), 0);
+      const anomalies = rowSummary.filter(r => r.jam_flag || r.dropout_flag);
 
-  const alerts = [
-    { message: "Tube 3 Jam Detected", tone: "red", icon: "🚨" },
-    { message: "Tube 5 Low Seed Rate", tone: "yellow", icon: "⚠" },
-    { message: "All Other Tubes Normal", tone: "green", icon: "✓" },
-  ];
+      setData({
+        loading: false,
+        error: null,
+        header: {
+          title: `${session.cropType ?? 'Seed'} Planting Dashboard`,
+          operator: operator?.name ?? '—',
+          status: session.status ?? '—',
+        },
+        metrics: [
+          { label: 'Session Time', value: fmtSessionTime(session.startedAt, session.endedAt) },
+          { label: 'Total Seeds Detected', value: totalSeeds.toLocaleString() },
+          { label: 'Average Rate', value: 'N/A' },
+          { label: 'Planter Speed', value: 'N/A' },
+        ],
+        seedRateData: seedTimeline.map((r, i) => ({
+          t: `${i * (BUCKET_MS / 1000)}s`,
+          rate: parseFloat((r.total_seeds / (BUCKET_MS / 1000)).toFixed(2)),
+        })),
+        tubePerfData: rowSummary.map(r => ({
+          tube: `T${r.row_number}`,
+          seeds: r.total_seeds,
+        })),
+        tubeStatuses: rowSummary.map(r => ({
+          name: `Tube ${r.row_number}`,
+          ...tubeStatus(r),
+        })),
+        alerts: anomalies.map(r =>
+          r.jam_flag
+            ? { message: `Row ${r.row_number} Jam Detected`, tone: 'red', icon: '🚨' }
+            : { message: `Row ${r.row_number} Low Seed Rate`, tone: 'yellow', icon: '⚠' }
+        ),
+        analytics: [
+          { label: 'Total Acres', value: '—' },
+          { label: 'Precision Score', value: '—' },
+          { label: 'Seed Distribution Accuracy', value: '—' },
+        ],
+      });
+    }
 
-  const analytics = [
-    { label: "Total Acres", value: "145.3" },
-    { label: "Precision Score", value: "92%" },
-    { label: "Seed Distribution Accuracy", value: "88%" },
-  ];
+    load().catch(err => setData(prev => ({ ...prev, error: err.message, loading: false })));
+  }, []);
 
-  return {
-    header,
-    metrics,
-    seedRateData,
-    tubePerfData,
-    tubeStatuses,
-    alerts,
-    analytics,
-  };
+  return data;
 }

@@ -4,6 +4,7 @@ import * as sessionController from './session.controller.js';
 const router = express.Router();
 
 router.get('/', sessionController.getSessions);
+router.get('/active', sessionController.getActiveSession);
 router.get('/:id', sessionController.getSessionById);
 router.get('/:id/seed-timeline', sessionController.getSeedTimeline);
 router.get('/:id/heatmap', sessionController.getHeatmap);
