@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import Sidebar from "../layout/Sidebar";
 import { useSessionDetailsViewModel } from "../../viewmodels/useSessionDetailsViewModel";
 import SessionSummaryCards from "./components/SessionSummaryCards";
@@ -8,7 +9,8 @@ import FieldInfoCard from "./components/FieldInfoCard";
 import SessionMap from "./components/SessionMap";
 
 export default function SessionDetailsPage() {
-  const { session, equipment, operator, field } = useSessionDetailsViewModel();
+  const { sessionId } = useParams();
+  const { session, equipment, operator, field } = useSessionDetailsViewModel(sessionId);
 
   return (
     <div className="flex min-h-screen bg-gray-100">

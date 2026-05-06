@@ -1,70 +1,45 @@
-export function useSessionListViewModel() {
-  const filters = {
-    date: "",
-    field: "",
-    tractor: "",
-  };
+import { useState, useEffect } from 'react';
+import { getSessions } from '../services/sessionService.js';
 
-  const sessions = [
-    {
-      session_id: "SESS-001",
-      field_name: "Field A",
-      crop_type: "Corn",
-      tractor_name: "John Deere 5075E",
-      operator_name: "John Doe",
-      started_at: "Apr 20, 2025 6:00 AM",
-      duration: "01:12",
-      seeds: "18,750",
-      status: "Completed",
-    },
-    {
-      session_id: "SESS-002",
-      field_name: "Field B",
-      crop_type: "Soybean",
-      tractor_name: "Kubota M5",
-      operator_name: "Jane Smith",
-      started_at: "Apr 18, 2025 8:10 AM",
-      duration: "00:45",
-      seeds: "12,300",
-      status: "Completed",
-    },
-    {
-      session_id: "SESS-003",
-      field_name: "Field C",
-      crop_type: "Wheat",
-      tractor_name: "John Deere 5075E",
-      operator_name: "John Doe",
-      started_at: "Apr 15, 2025 9:30 AM",
-      duration: "01:05",
-      seeds: "16,500",
-      status: "Review",
-    },
-    {
-      session_id: "SESS-004",
-      field_name: "Field D",
-      crop_type: "Corn",
-      tractor_name: "Case IH Magnum",
-      operator_name: "Mike Brown",
-      started_at: "Apr 12, 2025 7:40 AM",
-      duration: "00:32",
-      seeds: "14,200",
-      status: "Completed",
-    },
-    {
-      session_id: "SESS-005",
-      field_name: "Field E",
-      crop_type: "Cotton",
-      tractor_name: "New Holland T6",
-      operator_name: "Emily Clark",
-      started_at: "Apr 10, 2025 10:00 AM",
-      duration: "01:20",
-      seeds: "20,100",
-      status: "Completed",
-    },
-  ];
+function formatStartedAt(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric',
+    hour: 'numeric', minute: '2-digit', hour12: true,
+  });
+}
 
+function formatDuration(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+function mapSession(s) {
   return {
-    filters,
-    sessions,
+    session_id: s.sessionId,
+    field_name: s.fieldName ?? '—',
+    crop_type: s.cropType ?? '—',
+    tractor_name: s.tractorName ?? '—',
+    operator_name: s.operatorName ?? '—',
+    started_at: formatStartedAt(s.startedAt),
+    duration: formatDuration(s.durationSeconds ?? 0),
+    seeds: (s.totalSeeds ?? 0).toLocaleString(),
+    status: s.status ?? '—',
   };
+}
+
+export function useSessionListViewModel() {
+  const [sessions, setSessions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    getSessions()
+      .then(data => setSessions(data.map(mapSession)))
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  return { sessions, loading, error };
 }

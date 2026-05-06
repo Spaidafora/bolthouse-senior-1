@@ -1,12 +1,21 @@
 import * as sessionsRepo from './sessions.repository.js';
 import * as seedRepo from '../seed-interval-observations/seedIntervalObservations.repository.js';
-import * as gpsRepo from '../gps-telemetry-observations/gpsTelemetryObservations.repository.js';
 
 async function getSessions(req, res, next) {
   try {
-    const { tractorId, fieldId, date } = req.query;
-    const sessions = await sessionsRepo.findAll({ tractorId, fieldId, date });
+    const { tractorId, fieldId, date, status } = req.query;
+    const sessions = await sessionsRepo.findAllWithDetails({ tractorId, fieldId, date, status });
     res.json(sessions);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getActiveSession(req, res, next) {
+  try {
+    const session = await sessionsRepo.findActive();
+    if (!session) return res.status(404).json({ message: 'No active session' });
+    res.json(session);
   } catch (err) {
     next(err);
   }
@@ -50,4 +59,4 @@ async function getRowSummary(req, res, next) {
   }
 }
 
-export { getSessions, getSessionById, getSeedTimeline, getHeatmap, getRowSummary };
+export { getSessions, getActiveSession, getSessionById, getSeedTimeline, getHeatmap, getRowSummary };
