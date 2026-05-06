@@ -22,7 +22,7 @@ const pool = env === 'production'
       port: parseInt(process.env.DB_PORT) || 5432,
       database: process.env.DB_NAME || 'bolthouse_dev',
       user: process.env.DB_USER || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
+      password: process.env.DB_PASSWORD || 'Ilovelarry7!',
       max: 10,
       idleTimeoutMillis: 30_000,
       connectionTimeoutMillis: 2_000,
