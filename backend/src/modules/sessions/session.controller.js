@@ -1,30 +1,53 @@
-import { fetchSessions, fetchSessionsbyId } from "../models/model.sessions.js";
+import * as sessionsRepo from './sessions.repository.js';
+import * as seedRepo from '../seed-interval-observations/seedIntervalObservations.repository.js';
+import * as gpsRepo from '../gps-telemetry-observations/gpsTelemetryObservations.repository.js';
 
-
-
-async function getSessions(req, res) {
-    try {
-        const { tractorId, fieldId, date, } = req.query; 
-        const sessions = await fetchSessions({tractorId, fieldId, date});
-        res.json(sessions);
-
-    } catch (error){
-        console.error("Error in getSessions, ", error);
-        res.status(500).json({message:'Error fetching sessions'})
-
-    }
+async function getSessions(req, res, next) {
+  try {
+    const { tractorId, fieldId, date } = req.query;
+    const sessions = await sessionsRepo.findAll({ tractorId, fieldId, date });
+    res.json(sessions);
+  } catch (err) {
+    next(err);
+  }
 }
 
-async function getSessionbyId(req, res){
-    try {
-        const sessionId = req.params.sessionId; 
-        const sessionbyId = await fetchSessionsbyId(sessionId); // write later
-        res.json(sessionbyId)
-
-    } catch (error){
-        console.error("Error in getSessionbyId, ", error);
-        res.status(500).json({message: 'Error fetching session by id'})
-    }
+async function getSessionById(req, res, next) {
+  try {
+    const session = await sessionsRepo.findById(req.params.id);
+    if (!session) return res.status(404).json({ message: 'Session not found' });
+    res.json(session);
+  } catch (err) {
+    next(err);
+  }
 }
 
-export {getSessions, getSessionbyId}
+async function getSeedTimeline(req, res, next) {
+  try {
+    const bucketMs = req.query.bucket ? Number(req.query.bucket) : 60_000;
+    const rows = await seedRepo.findTimeline(req.params.id, bucketMs);
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getHeatmap(req, res, next) {
+  try {
+    const rows = await seedRepo.findHeatmap(req.params.id);
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getRowSummary(req, res, next) {
+  try {
+    const rows = await seedRepo.findRowSummary(req.params.id);
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export { getSessions, getSessionById, getSeedTimeline, getHeatmap, getRowSummary };
