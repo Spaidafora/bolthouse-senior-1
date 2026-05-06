@@ -3,6 +3,7 @@ import DashboardPage from "./views/Dashboard/DashboardPage";
 import SessionListPage from "./views/Sessions/SessionListPage";
 import SessionDetailsPage from "./views/Sessions/SessionDetailsPage";
 import LoginPage from "./views/Login/LoginPage";
+import SignupPage from "./views/Login/SignupPage";
 import "./App.css";
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/sessions" element={<SessionListPage />} />
         <Route path="/sessions/:sessionId" element={<SessionDetailsPage />} />
         <Route path="/login" element={<LoginPage/>} />
+        <Route path="/signup" element={<SignupPage/>} />
       </Routes>
     </Router>
   );

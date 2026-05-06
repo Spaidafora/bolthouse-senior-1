@@ -1,29 +1,37 @@
 import { Link } from "react-router-dom";
-export default function LoginPage(){
-    return (
-<div class="hero bg-base-200 min-h-screen">
-  <div class="hero-content flex-col lg:flex-row-reverse">
-    <div class="text-center lg:text-left">
-      <h1 class="text-5xl font-bold">Login now!</h1>
-      <p class="py-6">
-        Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
-        quasi. In deleniti eaque aut repudiandae et a id nisi.
-      </p>
-    </div>
-    <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-      <div class="card-body">
-        <fieldset class="fieldset">
-          <label class="label">Email</label>
-          <input type="email" class="input" placeholder="Email" />
-          <label class="label">Password</label>
-          <input type="password" class="input" placeholder="Password" />
-          <div><a class="link link-hover">Forgot password?</a></div>
-          <button class="btn btn-neutral mt-4">Login</button>
-        </fieldset>
-      </div>
-    </div>
-  </div>
-</div>
-    );
+import "./LoginPage.css";
 
+export default function LoginPage() {
+    return (
+        <div className="auth-container">
+            <div className="auth-card">
+                
+                <h1 className="auth-title">Log in</h1>
+
+                <span className="auth-subtext">
+                    Don't have an account?{" "}
+                    <Link to="/register" className="auth-link">
+                        Register
+                    </Link>
+                </span>
+
+                <label className="auth-field">
+                    <span>Email</span>
+                    <input type="email" placeholder="Enter your email" />
+                </label>
+
+                <label className="auth-field">
+                    <span>Password</span>
+                    <input type="password" placeholder="Enter your password" />
+                </label>
+
+                <label className="auth-checkbox">
+                    <input type="checkbox" />
+                    <span>Remember me</span>
+                </label>
+
+                <button className="auth-button">Log in</button>
+            </div>
+        </div>
+    );
 }
