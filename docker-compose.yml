@@ -12,3 +12,10 @@ services:
     container_name: bolthouse-pi-simulator
     depends_on:
       - mqtt-broker
+
+  subscriber:
+    build: 
+      context: ./subscriber
+    container_name: subscriber
+    depends_on:
+      - mqtt-broker
