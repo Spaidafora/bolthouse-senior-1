@@ -45,7 +45,7 @@ mqttc.connect(HOST, PORT, KEEPALIVE)
 mqttc.loop_start()
 
 
-# publish test messages
+# publish from csv data
 with open(CSV_FILE, mode='r') as file:
     reader = csv.DictReader(file)
     for row in reader:
@@ -64,7 +64,7 @@ with open(CSV_FILE, mode='r') as file:
         msg_info = mqttc.publish(topic=MQTT_TOPIC, payload=payload_json, qos=2)
         pending_ack.add(msg_info.mid)
 
-        
+
         print(f"published message id {msg_info.mid}", flush=True)
         time.sleep(payload["interval_ms"] / 1000)     # stream csv readings every 2 seconds
 

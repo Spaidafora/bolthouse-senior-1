@@ -1,5 +1,5 @@
-import pool from '../config/database.js';
-import { toTractor } from '../models/tractor.model.js';
+import pool from '../../config/database.js';
+import { toTractor } from './tractor.model.js';
 
 async function findById(tractorId) {
   const { rows } = await pool.query(

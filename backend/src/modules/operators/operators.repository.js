@@ -1,5 +1,5 @@
-import pool from '../config/database.js';
-import { toOperator } from '../models/operator.model.js';
+import pool from '../../config/database.js';
+import { toOperator } from './operator.model.js';
 
 async function findById(operatorId) {
   const { rows } = await pool.query(
