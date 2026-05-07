@@ -9,7 +9,7 @@ function getStatusClass(status) {
 export default function SessionTable({ sessions }) {
   return (
     <div className="bg-white rounded-xl shadow overflow-hidden">
-      <table className="w-full text-left">
+      <table className="w-full text-left text-text-dark">
         <thead className="bg-gray-50">
           <tr>
             <th className="p-4">Session ID</th>
