@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getSessionById, getRowSummary } from '../services/sessionService.js';
+import { getSessionById, getRowSummary, getSessionGps } from '../services/sessionService.js';
 import { getTractorById } from '../services/tractorService.js';
 import { getOperatorById } from '../services/operatorService.js';
 import { getFieldById } from '../services/fieldService.js';
@@ -14,6 +14,8 @@ const DEFAULT = {
   operator: { name: '—', employee_code: '—' },
   field: { name: '—', boundary: '—', area: '—' },
   rowMetrics: [],
+  gpsPath: [],
+  fieldBoundary: null,
 };
 
 function fmtDate(iso) {
@@ -51,11 +53,12 @@ export function useSessionDetailsViewModel(sessionId) {
     async function load() {
       const session = await getSessionById(sessionId);
 
-      const [tractor, operator, field, rowSummary] = await Promise.all([
+      const [tractor, operator, field, rowSummary, gpsPoints] = await Promise.all([
         session.tractorId ? getTractorById(session.tractorId) : Promise.resolve(null),
         session.operatorId ? getOperatorById(session.operatorId) : Promise.resolve(null),
         session.fieldId ? getFieldById(session.fieldId) : Promise.resolve(null),
         getRowSummary(sessionId),
+        getSessionGps(sessionId),
       ]);
 
       const totalSeeds = rowSummary.reduce((sum, r) => sum + (r.total_seeds || 0), 0);
@@ -98,6 +101,8 @@ export function useSessionDetailsViewModel(sessionId) {
           spacing: 'N/A',
           status: rowStatus(r),
         })),
+        gpsPath: gpsPoints.map(p => ({ lat: p.latitude, lng: p.longitude })),
+        fieldBoundary: field?.boundary ?? null,
       });
     }
 

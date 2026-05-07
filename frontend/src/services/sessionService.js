@@ -26,4 +26,8 @@ function getSeedTimeline(id, bucketMs = 60_000) {
   return get(`/api/sessions/${id}/seed-timeline?bucket=${bucketMs}`);
 }
 
-export { getSessions, getSessionById, getActiveSession, getRowSummary, getSeedTimeline };
+function getSessionGps(id) {
+  return get(`/api/sessions/${id}/gps`);
+}
+
+export { getSessions, getSessionById, getActiveSession, getRowSummary, getSeedTimeline, getSessionGps };

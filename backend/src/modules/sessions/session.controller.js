@@ -1,5 +1,6 @@
 import * as sessionsRepo from './sessions.repository.js';
 import * as seedRepo from '../seed-interval-observations/seedIntervalObservations.repository.js';
+import * as gpsRepo from '../gps-telemetry-observations/gpsTelemetryObservations.repository.js';
 
 async function getSessions(req, res, next) {
   try {
@@ -26,6 +27,15 @@ async function getSessionById(req, res, next) {
     const session = await sessionsRepo.findById(req.params.id);
     if (!session) return res.status(404).json({ message: 'Session not found' });
     res.json(session);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getSessionGps(req, res, next) {
+  try {
+    const points = await gpsRepo.findBySessionId(req.params.id);
+    res.json(points);
   } catch (err) {
     next(err);
   }
@@ -59,4 +69,4 @@ async function getRowSummary(req, res, next) {
   }
 }
 
-export { getSessions, getActiveSession, getSessionById, getSeedTimeline, getHeatmap, getRowSummary };
+export { getSessions, getActiveSession, getSessionById, getSessionGps, getSeedTimeline, getHeatmap, getRowSummary };
