@@ -10,7 +10,7 @@ import SessionMap from "./components/SessionMap";
 
 export default function SessionDetailsPage() {
   const { sessionId } = useParams();
-  const { session, equipment, operator, field } = useSessionDetailsViewModel(sessionId);
+  const { session, equipment, operator, field, gpsPath, fieldBoundary } = useSessionDetailsViewModel(sessionId);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -28,7 +28,7 @@ export default function SessionDetailsPage() {
 
         <div className="grid grid-cols-2 gap-6 mb-6">
           <SessionInfoCard session={session} />
-          <SessionMap />
+          <SessionMap path={gpsPath} boundary={fieldBoundary} />
         </div>
 
         <div className="grid grid-cols-3 gap-6">
